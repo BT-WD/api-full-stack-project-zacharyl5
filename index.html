@@ -1,11 +1,191 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>API Full Stack Project</title>
-  </head>
-  <body>
-    <!-- You code goes here-->
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pocket Dictionary</title>
+  <link rel="stylesheet" href="style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Mono:wght@300;400&display=swap" rel="stylesheet" />
+  <script src="script.js" defer></script>
+</head>
+<body>
+
+  <!-- ========== HEADER ========== -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">📖</span>
+        <div class="logo-text">
+          <span class="logo-title">Pocket Dictionary</span>
+          <span class="logo-sub">English Language Reference</span>
+        </div>
+      </div>
+      <button class="history-toggle" id="history-toggle" aria-label="Toggle search history">
+        <span class="history-icon">🕐</span>
+        <span>History</span>
+        <span class="history-badge" id="history-badge">4</span>
+      </button>
+    </div>
+  </header>
+
+  <!-- ========== HISTORY PANEL (slide-in) ========== -->
+  <aside class="history-panel" id="history-panel" aria-label="Search history">
+    <div class="history-panel-header">
+      <h2>Search History</h2>
+      <button class="close-history" id="close-history" aria-label="Close history">✕</button>
+    </div>
+    <ul class="history-list" id="history-list">
+      <!-- Placeholder history items -->
+      <li class="history-item">
+        <span class="history-word">ephemeral</span>
+        <span class="history-time">2 min ago</span>
+      </li>
+      <li class="history-item">
+        <span class="history-word">serendipity</span>
+        <span class="history-time">10 min ago</span>
+      </li>
+      <li class="history-item">
+        <span class="history-word">melancholy</span>
+        <span class="history-time">yesterday</span>
+      </li>
+      <li class="history-item">
+        <span class="history-word">luminous</span>
+        <span class="history-time">yesterday</span>
+      </li>
+    </ul>
+    <button class="clear-history-btn" id="clear-history">Clear History</button>
+  </aside>
+
+  <!-- ========== OVERLAY ========== -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ========== MAIN CONTENT ========== -->
+  <main class="main-content">
+
+    <!-- Search Section -->
+    <section class="search-section">
+      <div class="search-wrapper">
+        <div class="search-bar">
+          <input
+            type="text"
+            id="search-input"
+            class="search-input"
+            placeholder="Search a word..."
+            autocomplete="off"
+            spellcheck="false"
+            aria-label="Search for a word"
+          />
+          <button class="search-btn" id="search-btn" aria-label="Search">
+            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"/>
+              <path d="m21 21-4.35-4.35"/>
+            </svg>
+          </button>
+        </div>
+        <p class="search-hint">Try: <em>ephemeral</em>, <em>serendipity</em>, or <em>luminous</em></p>
+      </div>
+    </section>
+
+    <!-- ========== DATA CONTAINER (placeholder) ========== -->
+    <div id="data-container">
+
+      <!-- Loading State (hidden by default) -->
+      <div class="loading-state" id="loading-state" aria-hidden="true">
+        <div class="loading-dots">
+          <span></span><span></span><span></span>
+        </div>
+        <p>Looking up your word...</p>
+      </div>
+
+      <!-- Error State (hidden by default) -->
+      <div class="error-state" id="error-state" aria-hidden="true">
+        <span class="error-icon">🔍</span>
+        <h3>Word not found</h3>
+        <p id="error-message">We couldn't find that word. Check the spelling and try again.</p>
+      </div>
+
+      <!-- ========== RESULTS CARD ========== -->
+      <article class="result-card" id="result-card">
+
+        <!-- Word Header -->
+        <div class="word-header">
+          <div class="word-title-group">
+            <h1 class="word-title" id="word-title">ephemeral</h1>
+            <span class="word-phonetic" id="word-phonetic">/ɪˈfem.ər.əl/</span>
+          </div>
+          <button class="audio-btn" id="audio-btn" aria-label="Play pronunciation">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+              <path d="M15.54 8.46a5 5 0 0 1 0 7.07"/>
+              <path d="M19.07 4.93a10 10 0 0 1 0 14.14"/>
+            </svg>
+          </button>
+        </div>
+
+        <!-- Divider Rule -->
+        <hr class="card-rule" />
+
+        <!-- Meanings Container -->
+        <div class="meanings-container" id="meanings-container">
+
+          <!-- Meaning Block: adjective -->
+          <div class="meaning-block">
+            <span class="part-of-speech">adjective</span>
+            <ol class="definitions-list" id="definitions-list">
+              <li class="definition-item">
+                <p class="definition-text">Lasting for only a short time; transitory.</p>
+                <p class="definition-example">"the ephemeral pleasures of life"</p>
+              </li>
+              <li class="definition-item">
+                <p class="definition-text">Denoting plants that have a very short life cycle.</p>
+              </li>
+            </ol>
+          </div>
+
+        </div>
+
+        <!-- Divider Rule -->
+        <hr class="card-rule" />
+
+        <!-- Similar Words Section -->
+        <div class="similar-words-section" id="similar-words-section">
+
+          <div class="chips-group" id="synonyms-group">
+            <h3 class="chips-label">Synonyms</h3>
+            <div class="chips-container" id="synonym-chips">
+              <!-- Placeholder synonym chips -->
+              <button class="chip chip--synonym">fleeting</button>
+              <button class="chip chip--synonym">transient</button>
+              <button class="chip chip--synonym">momentary</button>
+              <button class="chip chip--synonym">brief</button>
+              <button class="chip chip--synonym">short-lived</button>
+            </div>
+          </div>
+
+          <div class="chips-group" id="antonyms-group">
+            <h3 class="chips-label">Antonyms</h3>
+            <div class="chips-container" id="antonym-chips">
+              <!-- Placeholder antonym chips -->
+              <button class="chip chip--antonym">permanent</button>
+              <button class="chip chip--antonym">eternal</button>
+              <button class="chip chip--antonym">enduring</button>
+            </div>
+          </div>
+
+        </div>
+
+      </article>
+      <!-- /.result-card -->
+
+    </div>
+    <!-- /#data-container -->
+
+  </main>
+
+  <!-- ========== FOOTER ========== -->
+  <footer class="site-footer">
+    <p>Powered by <a href="https://dictionaryapi.dev" target="_blank" rel="noopener">Free Dictionary API</a> &nbsp;·&nbsp; Built for English learners everywhere</p>
+  </footer>
+
+</body>
 </html>
