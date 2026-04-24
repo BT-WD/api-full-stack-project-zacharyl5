@@ -171,8 +171,9 @@ body {
 
 .history-panel-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
+  gap: 1rem;
   padding: 1.25rem 1.25rem 1rem;
   border-bottom: 1px solid rgba(245, 240, 232, 0.12);
 }
@@ -182,6 +183,15 @@ body {
   font-size: 1.15rem;
   font-weight: 700;
   color: var(--cream);
+}
+
+.history-subtext {
+  margin-top: 0.35rem;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: rgba(245, 240, 232, 0.66);
+  max-width: 220px;
+  line-height: 1.4;
 }
 
 .close-history {
@@ -220,10 +230,13 @@ body {
   background: rgba(200, 151, 42, 0.10);
 }
 
-.history-word {
-  font-family: var(--font-display);
-  font-size: 1rem;
-  font-style: italic;
+  .history-item.empty {
+    cursor: default;
+    justify-content: center;
+    background: transparent;
+    color: rgba(245, 240, 232, 0.75);
+  }
+
   color: var(--cream);
   transition: color var(--transition);
 }
