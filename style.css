@@ -485,6 +485,13 @@ body {
 }
 
 /* Audio Button */
+.action-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.favorite-btn,
 .audio-btn {
   background: var(--cream-dark);
   border: 1.5px solid var(--ink);
@@ -499,6 +506,26 @@ body {
   flex-shrink: 0;
   margin-top: 0.5rem;
   transition: background var(--transition), transform var(--transition);
+}
+
+.favorite-btn {
+  font-size: 1rem;
+}
+
+.favorite-btn.active {
+  background: var(--gold-light);
+  border-color: var(--gold);
+  color: var(--ink);
+}
+
+.favorite-btn:hover,
+.audio-btn:hover {
+  background: var(--gold-light);
+  transform: scale(1.08);
+}
+
+.audio-btn:hover {
+  background: var(--gold-light);
 }
 
 .audio-btn:hover {

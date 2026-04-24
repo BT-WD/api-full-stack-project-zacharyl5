@@ -7,6 +7,7 @@
 const API_URL = "https://api.dictionaryapi.dev/api/v2/entries/en/";
 const HISTORY_KEY = "pocketDictionaryHistory";
 const LAST_SEARCH_KEY = "pocketDictionaryLastSearch";
+const FAVORITES_KEY = "pocketDictionaryFavorites";
 const HISTORY_LIMIT = 12;
 
 // ── DOM References ──────────────────────────────────────────
@@ -18,6 +19,7 @@ const errorState       = document.getElementById("error-state");
 const errorMessage     = document.getElementById("error-message");
 const wordTitle        = document.getElementById("word-title");
 const wordPhonetic     = document.getElementById("word-phonetic");
+const favoriteBtn      = document.getElementById("favorite-btn");
 const audioBtn         = document.getElementById("audio-btn");
 const meaningsContainer= document.getElementById("meanings-container");
 const synonymChips     = document.getElementById("synonym-chips");
@@ -33,6 +35,7 @@ const historyBadge     = document.getElementById("history-badge");
 // ── State ───────────────────────────────────────────────────
 let currentAudioUrl = null;
 let searchHistory = loadHistory();
+let favorites = loadFavorites();
 
 // ── Local Storage Helpers ───────────────────────────────────
 function loadHistory() {
@@ -52,6 +55,21 @@ function saveHistory() {
 
 function saveLastSearch(word) {
   localStorage.setItem(LAST_SEARCH_KEY, word);
+}
+
+function loadFavorites() {
+  try {
+    const raw = localStorage.getItem(FAVORITES_KEY);
+    const parsed = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (error) {
+    console.warn("[PocketDictionary] Failed to load favorites:", error);
+    return [];
+  }
+}
+
+function saveFavorites() {
+  localStorage.setItem(FAVORITES_KEY, JSON.stringify(favorites));
 }
 
 function loadLastSearch() {
@@ -137,6 +155,39 @@ function updateHistoryToggleLabel(isOpen) {
   }
 }
 
+function toggleFavorite(word) {
+  const normalized = word.trim().toLowerCase();
+  if (!normalized) return;
+
+  const index = favorites.indexOf(normalized);
+  if (index >= 0) {
+    favorites.splice(index, 1);
+  } else {
+    favorites.push(normalized);
+  }
+  saveFavorites();
+  updateFavoriteButton(normalized);
+}
+
+function isFavorite(word) {
+  return favorites.includes(word.trim().toLowerCase());
+}
+
+function updateFavoriteButton(word) {
+  const active = isFavorite(word);
+  favoriteBtn.classList.toggle("active", active);
+  favoriteBtn.textContent = active ? "★" : "☆";
+  favoriteBtn.setAttribute("aria-label", active ? "Remove word from favorites" : "Save word to favorites");
+}
+
+function updateHistoryToggleLabel(isOpen) {
+  const label = historyToggle.querySelector("span:nth-child(2)");
+  if (label) {
+    label.textContent = isOpen ? "Close" : "History";
+  }
+  historyToggle.setAttribute("aria-expanded", String(isOpen));
+}
+
 function openHistoryPanel() {
   historyPanel.classList.add("open");
   overlay.classList.add("active");
@@ -197,6 +248,7 @@ async function searchWord(word) {
     renderResult(data[0]);
     addSearchHistory(data[0].word || word);
     saveLastSearch(data[0].word || word);
+    updateFavoriteButton(data[0].word || word);
     showResult();
   } catch (error) {
     console.error("[PocketDictionary] Network or fetch error:", error);
@@ -329,9 +381,16 @@ searchInput.addEventListener("keydown", (e) => {
   }
 });
 
+favoriteBtn.addEventListener("click", () => {
+  const word = wordTitle.textContent.trim();
+  if (!word) return;
+  toggleFavorite(word);
+});
+
 // ── Bootstrap ───────────────────────────────────────────────
 updateHistoryBadge();
 renderHistory();
+updateHistoryToggleLabel(false);
 
 const lastSearch = loadLastSearch();
 if (lastSearch) {
